@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .dragable {
+            width: 100px;
+            height: 100px;
+            background: #66ccff;
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dragable"></div>
+    <div class="dragable"></div>
+    <div class="dragable"></div>
+    <div class="dragable"></div>
+    <div class="dragable"></div>
+    <div class="dragable"></div>
+    <script>
+        function getElemPos(obj) {
+            var pos = { "top": 0, "left": 0 };
+            if (obj.offsetParent) {
+                while (obj.offsetParent) {
+                    pos.top += obj.offsetTop;
+                    pos.left += obj.offsetLeft;
+                    obj = obj.offsetParent;
+                }
+            } else if (obj.x) {
+                pos.left += obj.x;
+            } else if (obj.x) {
+                pos.top += obj.y;
+            }
+            return { x: pos.left, y: pos.top };
+        }
+        window.onload = function () {
+            var drags = document.getElementsByClassName('dragable')
+            for (let i = 0; i < drags.length; i++) {
+                init(drags[i])
+            }
+            function init(drag) {
+                const iniPos = getElemPos(drag)
+                drag.onmousedown = function (e) {
+                    var diffX = e.clientX - drag.offsetLeft + iniPos.x;
+                    var diffY = e.clientY - drag.offsetTop + iniPos.y;
+                    document.onmousemove = function (e) {
+                        var left = e.clientX - diffX;
+                        var top = e.clientY - diffY;
+                        drag.style.left = left + 'px';
+                        drag.style.top = top + 'px';
+                    };
+                    document.onmouseup = function (e) {
+                        this.onmousemove = null;
+                        this.onmouseup = null;
+                    };
+                };
+            }
+        };
+
+        const arr = ['a', 'b', 'c', 'd', 'e', 'f', 'a']
+        let obj = {}
+        let max = { num: 0, str: '' }
+        arr.map(v => {
+            obj[v] ? obj[v]++ : obj[v] = 1
+            if (obj[v] > max.num) {
+                max = {
+                    num: obj[v],
+                    str: v
+                }
+            }
+        })
+        console.log(max.str)
+    </script>
+</body>
+
+</html>
